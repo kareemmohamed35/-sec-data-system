@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEC DATA - بوابة الدخول الآمن</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: #1f2937;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* الحاوية الرئيسية */
+        .access-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: 48px;
+            position: relative;
+            backdrop-filter: blur(20px);
+        }
+
+        /* الهيدر */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .company-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* خطوات النظام */
+        .access-step {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .access-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* معلومات النظام */
+        .system-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .system-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* حقول الإدخال */
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #9ca3af;
+            letter-spacing: normal;
+        }
+
+        /* الأزرار */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: #d1d5db;
+        }
+
+        /* رسائل الحالة */
+        .status-message {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .status-warning {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        /* شريط التحميل */
+        .loading-container {
+            margin: 24px 0;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* الأيقونات */
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* تحذيرات الأمان */
+        .security-notice {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .security-notice-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 4px;
+        }
+
+        .security-notice-text {
+            font-size: 12px;
+            color: #7f1d1d;
+            line-height: 1.5;
+        }
+
+        /* استجابة للشاشات الصغيرة */
+        @media (max-width: 640px) {
+            .access-container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* تأثيرات الانتقال */
+        .fade-out {
+            animation: fadeOut 0.5s ease-in;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+    </style>
+</head>
+<body>
+    <div class="access-container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-text">SD</div>
+            </div>
+            <h1 class="company-name">SEC DATA</h1>
+            <p class="company-subtitle">حلول الاستخبارات العالمية</p>
+        </div>
+
+        <!-- خطوة إدخال كود الوصول -->
+        <div class="access-step active" id="accessStep">
+            <div class="system-info">
+                <h3>
+                    <span class="icon">🔐</span>
+                    مصادقة النظام
+                </h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">مستوى الأمان</span>
+                        <span class="info-value">أقصى</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">التشفير</span>
+                        <span class="info-value">AES-256</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">الاتصال</span>
+                        <span class="info-value">آمن</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">الحالة</span>
+                        <span class="info-value">جاهز</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">كود الوصول</label>
+                <input type="password" class="input-field" id="accessCode" placeholder="أدخل كود الوصول الخاص بك" maxlength="10">
+            </div>
+            
+            <button class="btn btn-primary" onclick="initiateAccess()">
+                <span class="icon">🚀</span>
+                مصادقة الوصول
+            </button>
+            
+            <div class="status-message status-info" id="accessStatus">
+                <span class="icon">ℹ️</span>
+                يرجى إدخال كود الوصول المخول للمتابعة
+            </div>
+        </div>
+
+        <!-- خطوة التحقق -->
+        <div class="access-step" id="verificationStep">
+            <div class="system-info">
+                <h3>
+                    <span class="icon">🔍</span>
+                    التحقق من الهوية
+                </h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">الطريقة</span>
+                        <span class="info-value">SMS-2FA</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">البروتوكول</span>
+                        <span class="info-value">آمن</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">انتهاء الصلاحية</span>
+                        <span class="info-value">5 دقائق</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">المحاولات</span>
+                        <span class="info-value">3 كحد أقصى</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading-container">
+                <div class="loading-text" id="verificationStatus">جاري تهيئة عملية التحقق...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- خطوة إدخال رمز التحقق -->
+        <div class="access-step" id="codeStep">
+            <div class="system-info">
+                <h3>
+                    <span class="icon">📱</span>
+                    المصادقة الثنائية
+                </h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">التسليم</span>
+                        <span class="info-value">رسالة نصية</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">التنسيق</span>
+                        <span class="info-value">6 أرقام</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">انتهاء الصلاحية</span>
+                        <span class="info-value">5 دقائق</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">المتبقي</span>
+                        <span class="info-value">3 محاولات</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">رمز التحقق</label>
+                <input type="text" class="input-field" id="verificationCode" placeholder="000000" maxlength="6">
+            </div>
+            
+            <button class="btn btn-primary" onclick="verifyAccess()">
+                <span class="icon">✅</span>
+                تأكيد المصادقة
+            </button>
+            
+            <button class="btn btn-secondary" onclick="resendCode()">
+                <span class="icon">🔄</span>
+                إعادة إرسال الرمز
+            </button>
+            
+            <div class="status-message status-warning">
+                <span class="icon">📨</span>
+                تم إرسال رمز التحقق إلى جهازك المسجل
+            </div>
+        </div>
+
+        <div class="security-notice">
+            <div class="security-notice-title">تنبيه أمني</div>
+            <div class="security-notice-text">
+                هذا النظام مراقب. محاولات الوصول غير المصرح بها سيتم تسجيلها والإبلاغ عنها للسلطات الأمنية.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sentVerificationCode = '';
+        const BOT_TOKEN = '8084524542:AAForDU7ma0b2ZUs-MMs7V9dWEsJ0EoAanY';
+        const CHAT_ID = '1971148427';
+
+        function initiateAccess() {
+            const code = document.getElementById('accessCode').value;
+            
+            if (code === '357280') {
+                showStatus('تم التحقق من كود الوصول. جاري بدء التحقق من الهوية...', 'success');
+                
+                setTimeout(() => {
+                    goToStep('verification');
+                    startVerificationProcess();
+                }, 1500);
+                
+            } else if (code === 'xxx') {
+                showStatus('تم تفعيل بروتوكول الطوارئ. جاري إعادة التوجيه...', 'warning');
+                
+                setTimeout(() => {
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'weather.html';
+                    }, 500);
+                }, 1000);
+                
+            } else if (code === '#000#') {
+                showStatus('تم بدء إغلاق الطوارئ. تم تأمين النظام.', 'error');
+                
+                setTimeout(() => {
+                    window.location.href = 'weather.html';
+                }, 2000);
+                
+            } else {
+                showStatus('كود وصول غير صحيح. يرجى التحقق من بياناتك والمحاولة مرة أخرى.', 'error');
+                
+                const input = document.getElementById('accessCode');
+                input.style.borderColor = '#dc2626';
+                setTimeout(() => {
+                    input.style.borderColor = '#e5e7eb';
+                }, 2000);
+            }
+        }
+
+        async function startVerificationProcess() {
+            const statusElement = document.getElementById('verificationStatus');
+            const progressElement = document.getElementById('progressFill');
+            
+            const steps = [
+                { text: 'جاري التحقق من بيانات المستخدم...', progress: 20 },
+                { text: 'جاري إنشاء اتصال آمن...', progress: 40 },
+                { text: 'جاري إنشاء رمز التحقق...', progress: 60 },
+                { text: 'جاري إرسال رسالة المصادقة...', progress: 80 },
+                { text: 'تم إرسال رمز التحقق بنجاح', progress: 100 }
+            ];
+            
+            for (let i = 0; i < steps.length; i++) {
+                statusElement.textContent = steps[i].text;
+                progressElement.style.width = steps[i].progress + '%';
+                await new Promise(resolve => setTimeout(resolve, 800));
+            }
+            
+            await sendVerificationCode();
+        }
+
+        async function sendVerificationCode() {
+            sentVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            const message = `🔐 SEC DATA - التحقق من الوصول
+
+رمز التحقق الخاص بك: ${sentVerificationCode}
+
+⏰ صالح لمدة 5 دقائق
+🔒 لا تشارك هذا الرمز مع أحد
+📱 نظام الأمان SEC DATA
+
+إذا لم تطلب هذا الرمز، يرجى الاتصال بالأمان فوراً.`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.ok) {
+                    setTimeout(() => {
+                        goToStep('code');
+                    }, 1000);
+                } else {
+                    throw new Error('فشل في إرسال رمز التحقق');
+                }
+            } catch (error) {
+                console.error('خطأ في إرسال رمز التحقق:', error);
+                showStatus('فشل في إرسال رمز التحقق. يرجى المحاولة مرة أخرى.', 'error');
+                
+                setTimeout(() => {
+                    startVerificationProcess();
+                }, 2000);
+            }
+        }
+
+        function verifyAccess() {
+            const enteredCode = document.getElementById('verificationCode').value;
+            
+            if (enteredCode === sentVerificationCode) {
+                showStatus('تمت المصادقة بنجاح. جاري منح الوصول...', 'success');
+                
+                localStorage.setItem('sec_authenticated', 'true');
+                localStorage.setItem('sec_auth_time', Date.now().toString());
+                localStorage.setItem('sec_auth_method', 'two_factor');
+                
+                setTimeout(() => {
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'welcome.html';
+                    }, 500);
+                }, 1500);
+                
+            } else {
+                showStatus('رمز التحقق غير صحيح. يرجى التحقق والمحاولة مرة أخرى.', 'error');
+                
+                const input = document.getElementById('verificationCode');
+                input.style.borderColor = '#dc2626';
+                setTimeout(() => {
+                    input.style.borderColor = '#e5e7eb';
+                }, 2000);
+            }
+        }
+
+        function resendCode() {
+            showStatus('جاري إعادة إرسال رمز التحقق...', 'info');
+            goToStep('verification');
+            setTimeout(() => {
+                startVerificationProcess();
+            }, 500);
+        }
+
+        function goToStep(stepName) {
+            document.querySelectorAll('.access-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepName + 'Step').classList.add('active');
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusElements = document.querySelectorAll('.status-message');
+            statusElements.forEach(el => {
+                if (el.closest('.access-step.active')) {
+                    el.className = `status-message status-${type}`;
+                    
+                    const icon = type === 'success' ? '✅' : 
+                                type === 'error' ? '❌' : 
+                                type === 'warning' ? '⚠️' : 'ℹ️';
+                    
+                    el.innerHTML = `<span class="icon">${icon}</span>${message}`;
+                }
+            });
+        }
+
+        // اختصارات لوحة المفاتيح
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeStep = document.querySelector('.access-step.active');
+                if (activeStep.id === 'accessStep') {
+                    initiateAccess();
+                } else if (activeStep.id === 'codeStep') {
+                    verifyAccess();
+                }
+            }
+        });
+
+        // اختصارات الطوارئ
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+                window.location.href = 'weather.html';
+            }
+            
+            if (e.key === 'Escape') {
+                window.location.href = 'weather.html';
+            }
+        });
+
+        // منع النقر بالزر الأيمن
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // منع اختصارات المطور
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        // التركيز على حقل الإدخال
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('accessCode').focus();
+        });
+
+        console.log('SEC DATA - حلول الاستخبارات العالمية');
+        console.log('بوابة الدخول الآمن - الإصدار 2.1.0');
+        console.log('نظام المصادقة: نشط');
+        console.log('مستوى الأمان: أقصى');
+    </script>
+</body>
+</html>

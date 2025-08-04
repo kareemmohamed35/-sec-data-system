@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEC DATA - مركز العمليات</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* الهيدر */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            color: #ffffff;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .brand-info h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .brand-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* شبكة لوحة التحكم */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* بطاقات النظام */
+        .system-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-status {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* إحصائيات النظام */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        /* العمليات النشطة */
+        .operations-list {
+            list-style: none;
+        }
+
+        .operation-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .operation-item:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .operation-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .operation-info p {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .operation-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-classified {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        .status-completed {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* قاعدة بيانات العملاء */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .agent-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .agent-card:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .agent-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .agent-clearance {
+            background: #fffbeb;
+            color: #d97706;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #fed7aa;
+        }
+
+        .agent-details {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* سجل الأنشطة */
+        .activity-log {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+        }
+
+        .log-entry {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: #64748b;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .log-source {
+            color: #3b82f6;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .log-message {
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .log-level-info { color: #3b82f6; }
+        .log-level-warning { color: #d97706; }
+        .log-level-error { color: #dc2626; }
+
+        /* أدوات التحكم */
+        .control-panel {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            grid-column: 1 / -1;
+            margin-top: 24px;
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .control-btn.danger {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .control-btn.danger:hover {
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        /* عداد الوقت */
+        .session-timer {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: #ffffff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        /* تحذيرات الأمان */
+        .security-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 32px;
+            font-size: 14px;
+        }
+
+        /* استجابة للشاشات الصغيرة */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 24px 16px;
+            }
+            
+            .system-card {
+                padding: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* تأثيرات الانتقال */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-in;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="brand-logo">SD</div>
+                <div class="brand-info">
+                    <h1>SEC DATA</h1>
+                    <p>مركز العمليات الاستخباراتية</p>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>النظام متصل</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content fade-in">
+        <div class="session-timer" id="sessionTimer">
+            وقت الجلسة: 00:00:00
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- إحصائيات النظام -->
+            <div class="system-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span>📊</span>
+                        حالة النظام
+                    </h2>
+                    <div class="card-status">تشغيلي</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">الأمان</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">الجلسات</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="uptime">0</div>
+                        <div class="stat-label">دقائق</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">AES-256</div>
+                        <div class="stat-label">التشفير</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- العمليات النشطة -->
+            <div class="system-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span>🎯</span>
+                        العمليات النشطة
+                    </h2>
+                    <div class="card-status">سرية</div>
+                </div>
+                
+                <ul class="operations-list">
+                    <li class="operation-item" onclick="accessOperation('عملية الليل')">
+                        <div class="operation-info">
+                            <h4>عملية الليل</h4>
+                            <p>مراقبة سرية عميقة</p>
+                        </div>
+                        <div class="operation-status status-active">نشطة</div>
+                    </li>
+                    <li class="operation-item" onclick="accessOperation('عملية الشبح')">
+                        <div class="operation-info">
+                            <h4>عملية الشبح</h4>
+                            <p>جمع المعلومات الاستخباراتية</p>
+                        </div>
+                        <div class="operation-status status-classified">سرية</div>
+                    </li>
+                    <li class="operation-item" onclick="accessOperation('عملية الظلام')">
+                        <div class="operation-info">
+                            <h4>عملية الظلام</h4>
+                            <p>مكافحة الاستخبارات</p>
+                        </div>
+                        <div class="operation-status status-completed">مكتملة</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- قاعدة بيانات العملاء -->
+            <div class="system-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span>👥</span>
+                        قاعدة بيانات العملاء
+                    </h2>
+                    <div class="card-status">مشفرة</div>
+                </div>
+                
+                <div class="agents-grid">
+                    <div class="agent-card" onclick="accessAgent('العميل الظل')">
+                        <div class="agent-header">
+                            <div class="agent-name">العميل الظل</div>
+                            <div class="agent-clearance">المستوى 8</div>
+                        </div>
+                        <div class="agent-details">
+                            الحالة: تغطية عميقة<br>
+                            الموقع: [سري]<br>
+                            آخر اتصال: منذ ساعتين
+                        </div>
+                    </div>
+                    
+                    <div class="agent-card" onclick="accessAgent('العميل الشبح')">
+                        <div class="agent-header">
+                            <div class="agent-name">العميل الشبح</div>
+                            <div class="agent-clearance">المستوى 9</div>
+                        </div>
+                        <div class="agent-details">
+                            الحالة: مهمة نشطة<br>
+                            الموقع: [محذوف]<br>
+                            آخر اتصال: منذ 15 دقيقة
+                        </div>
+                    </div>
+                    
+                    <div class="agent-card" onclick="accessAgent('العميل الأفعى')">
+                        <div class="agent-header">
+                            <div class="agent-name">العميل الأفعى</div>
+                            <div class="agent-clearance">المستوى 7</div>
+                        </div>
+                        <div class="agent-details">
+                            الحالة: في الانتظار<br>
+                            الموقع: البيت الآمن ألفا<br>
+                            آخر اتصال: منذ ساعة
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- سجل الأنشطة -->
+            <div class="system-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span>📋</span>
+                        سجل الأنشطة
+                    </h2>
+                    <div class="card-status">مباشر</div>
+                </div>
+                
+                <div class="activity-log" id="activityLog">
+                    <!-- سيتم ملؤه بـ JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- أدوات التحكم -->
+        <div class="control-panel">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span>🎛️</span>
+                    أدوات التحكم في النظام
+                </h2>
+                <div class="card-status">مخول</div>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="control-btn" onclick="newOperation()">
+                    <span>🚀</span>
+                    عملية جديدة
+                </button>
+                <button class="control-btn" onclick="addAgent()">
+                    <span>👤</span>
+                    إضافة عميل
+                </button>
+                <button class="control-btn" onclick="viewFiles()">
+                    <span>📁</span>
+                    الملفات السرية
+                </button>
+                <button class="control-btn" onclick="generateReport()">
+                    <span>📈</span>
+                    إنشاء تقرير
+                </button>
+                <button class="control-btn" onclick="systemSettings()">
+                    <span>⚙️</span>
+                    إعدادات النظام
+                </button>
+                <button class="control-btn danger" onclick="emergencyLock()">
+                    <span>🚨</span>
+                    قفل الطوارئ
+                </button>
+            </div>
+        </div>
+
+        <div class="security-banner">
+            ⚠️ نظام سري - جميع الأنشطة مراقبة ومسجلة
+        </div>
+    </div>
+
+    <script>
+        let sessionStartTime = Date.now();
+        let activityLogEntries = [];
+
+        // فحص المصادقة
+        function checkAuthentication() {
+            const isAuthenticated = localStorage.getItem('sec_authenticated');
+            const authTime = localStorage.getItem('sec_auth_time');
+            
+            if (!isAuthenticated || !authTime) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            sessionStartTime = parseInt(authTime);
+            return true;
+        }
+
+        // تحديث وقت الجلسة
+        function updateSessionTime() {
+            const now = Date.now();
+            const elapsed = now - sessionStartTime;
+            const hours = Math.floor(elapsed / (1000 * 60 * 60));
+            const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('sessionTimer').textContent = `وقت الجلسة: ${timeString}`;
+            
+            const minutesPassed = Math.floor(elapsed / (1000 * 60));
+            document.getElementById('uptime').textContent = minutesPassed;
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟ سيؤدي هذا إلى إنهاء جلستك الآمنة.')) {
+                addLogEntry('النظام', 'تم إنهاء الجلسة بواسطة المستخدم', 'info');
+                
+                document.body.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    localStorage.removeItem('sec_authenticated');
+                    localStorage.removeItem('sec_auth_time');
+                    localStorage.removeItem('sec_auth_method');
+                    window.location.href = 'index.html';
+                }, 500);
+            }
+        }
+
+        // إضافة إدخال لسجل الأنشطة
+        function addLogEntry(source, message, level = 'info') {
+            const timestamp = new Date().toLocaleTimeString('ar-EG', { hour12: false });
+            const entry = {
+                timestamp,
+                source,
+                message,
+                level
+            };
+            
+            activityLogEntries.unshift(entry);
+            if (activityLogEntries.length > 50) {
+                activityLogEntries.pop();
+            }
+            
+            updateActivityLog();
+        }
+
+        // تحديث سجل الأنشطة
+        function updateActivityLog() {
+            const logContainer = document.getElementById('activityLog');
+            logContainer.innerHTML = '';
+            
+            activityLogEntries.forEach(entry => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">${entry.timestamp}</span>
+                    <span class="log-source">${entry.source}</span>
+                    <span class="log-message log-level-${entry.level}">${entry.message}</span>
+                `;
+                logContainer.appendChild(logEntry);
+            });
+        }
+
+        // الوصول للعمليات
+        function accessOperation(operationCode) {
+            addLogEntry('العمليات', `تم الوصول إلى ${operationCode}`, 'info');
+            alert(`العملية: ${operationCode}\n\nتفاصيل العملية السرية تتطلب تصريح أمني إضافي.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]`);
+        }
+
+        // الوصول للعملاء
+        function accessAgent(agentCode) {
+            addLogEntry('العملاء', `تم الوصول إلى ملف ${agentCode}`, 'info');
+            alert(`ملف العميل: ${agentCode}\n\nمعلومات العميل السرية تتطلب التحقق البيومتري.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]`);
+        }
+
+        // عملية جديدة
+        function newOperation() {
+            addLogEntry('النظام', 'تم بدء عملية جديدة', 'info');
+            alert('بروتوكول العملية الجديدة\n\nجاري بدء واجهة تخطيط العمليات الآمنة.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]');
+        }
+
+        // إضافة عميل
+        function addAgent() {
+            addLogEntry('العملاء', 'تم بدء تسجيل عميل جديد', 'info');
+            alert('بروتوكول تسجيل العميل\n\nجاري بدء عملية إدخال العميل الآمنة.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]');
+        }
+
+        // عرض الملفات
+        function viewFiles() {
+            addLogEntry('الملفات', 'تم الوصول إلى الملفات السرية', 'warning');
+            alert('قاعدة بيانات الملفات السرية\n\nجاري الوصول إلى نظام تخزين الملفات المشفرة.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]');
+        }
+
+        // إنشاء تقرير
+        function generateReport() {
+            addLogEntry('التقارير', 'تم بدء إنشاء التقرير', 'info');
+            alert('مولد التقارير الاستخباراتية\n\nجاري بدء تجميع التقرير التلقائي.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]');
+        }
+
+        // إعدادات النظام
+        function systemSettings() {
+            addLogEntry('الإعدادات', 'تم الوصول إلى إعدادات النظام', 'info');
+            alert('تكوين النظام\n\nجاري الوصول إلى تفضيلات الأمان والنظام.\n\n[سيتم تنفيذ هذه الميزة في النظام الكامل]');
+        }
+
+        // قفل الطوارئ
+        function emergencyLock() {
+            addLogEntry('الأمان', 'تم بدء إغلاق الطوارئ', 'error');
+            
+            if (confirm('بروتوكول إغلاق الطوارئ\n\nسيؤدي هذا إلى إنهاء جميع الجلسات وقفل النظام فوراً.\n\nتأكيد إغلاق الطوارئ؟')) {
+                alert('تم تفعيل إغلاق الطوارئ\n\nتم تأمين جميع الأنظمة. اتصل بقسم الأمان.');
+                logout();
+            }
+        }
+
+        // اختصارات لوحة المفاتيح
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+                window.location.href = 'weather.html';
+            }
+            
+            if (e.key === 'Escape') {
+                emergencyLock();
+            }
+        });
+
+        // منع النقر بالزر الأيمن
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            addLogEntry('الأمان', 'تم رفض الوصول إلى القائمة السياقية', 'warning');
+        });
+
+        // منع اختصارات المطور
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                addLogEntry('الأمان', 'تم رفض الوصول إلى أدوات المطور', 'warning');
+            }
+        });
+
+        // تشغيل النظام عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication()) {
+                // إضافة إدخالات أولية لسجل الأنشطة
+                addLogEntry('النظام', 'تم تهيئة مركز العمليات الاستخباراتية', 'info');
+                addLogEntry('المصادقة', 'تم التحقق من مصادقة العميل', 'info');
+                addLogEntry('الأمان', 'تم تفعيل أقصى تشفير', 'info');
+                addLogEntry('قاعدة البيانات', 'تم الاتصال بقاعدة البيانات السرية', 'info');
+                
+                // تحديث وقت الجلسة كل ثانية
+                updateSessionTime();
+                setInterval(updateSessionTime, 1000);
+                
+                // إضافة إدخالات عشوائية لسجل الأنشطة
+                setInterval(() => {
+                    const randomMessages = [
+                        'تم استلام اتصال مشفر',
+                        'تم إنشاء رابط الأقمار الصناعية',
+                        'اكتملت مزامنة قاعدة البيانات',
+                        'اكتمل فحص الأمان',
+                        'تم تحديث حالة العميل',
+                        'تم التحقق من معاملات العملية'
+                    ];
+                    const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+                    addLogEntry('النظام', randomMessage, 'info');
+                }, 45000);
+            }
+        });
+
+        console.log('SEC DATA - مركز العمليات الاستخباراتية');
+        console.log('حالة النظام: تشغيلي بالكامل');
+        console.log('مستوى الأمان: أقصى تشفير');
+        console.log('حالة العميل: مصادق عليه');
+        console.log('المراقبة المباشرة: نشطة');
+    </script>
+</body>
+</html>
